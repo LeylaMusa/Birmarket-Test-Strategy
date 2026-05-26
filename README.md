@@ -4,7 +4,7 @@
 
 # **Birmarket – Test Strategy**
 
-## 1. Məqsəd (Test Objectives)
+## 1. Məqsəd (Test Objectives)  
 
 * Birmarket platformasının **funksional, stabil, təhlükəsiz və istifadəçi-dostu** olmasını təmin etmək
 * Production-a çıxmazdan əvvəl **kritik riskləri minimuma endirmək**
