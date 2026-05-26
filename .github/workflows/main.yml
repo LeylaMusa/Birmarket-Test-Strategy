@@ -1,0 +1,79 @@
+name: Bash CI/CD Emulation
+
+# Пайплайн запускается автоматически при каждом пуше (push) в ветку main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # === ЭТАП 1: СБОРКА ===
+  build_stage:
+    name: Build Stage
+    runs-on: ubuntu-latest # Запуск в чистой виртуальной машине Linux
+    
+    steps:
+      - name: Generate Version File
+        run: |
+          echo "=== Начинаем сборку ==="
+          # Записываем текущую дату и системную переменную (ID запуска пайплайна) в файл
+          echo "Build Date: $(date)" > version.txt
+          echo "Build ID: ${{ github.run_id }}" >> version.txt
+          echo "Файл version.txt успешно создан."
+          cat version.txt
+
+      # Сохраняем файл как артефакт, чтобы передать его в следующий Job
+      - name: Upload Version Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: version.txt
+
+  # === ЭТАП 2: ТЕСТИРОВАНИЕ ===
+  test_stage:
+    name: Test Stage
+    runs-on: ubuntu-latest
+    needs: build_stage # Говорим, что этот этап ждет успешного завершения сборки
+    
+    steps:
+      # Скачиваем сохраненный на прошлом шаге артефакт
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+
+      - name: Run Validations
+        run: |
+          echo "=== Начинаем тестирование ==="
+          
+          # Проверяем, что файл вообще существует и не пустой
+          if [ -s version.txt ]; then
+            echo "Проверка: Файл существует и содержит данные."
+          else
+            echo "Ошибка: Файл пуст или отсутствует!" && exit 1
+          fi
+          
+          # Ищем в файле ключевое слово "Build ID" с помощью grep
+          if grep -q "Build ID:" version.txt; then
+            echo "Проверка: Формат файла корректен (содержит Build ID)."
+          else
+            echo "Ошибка: Ключевое слово не найдено!" && exit 1
+          fi
+
+  # === ЭТАП 3: РАЗВЕРТЫВАНИЕ ===
+  deploy_stage:
+    name: Deploy Stage
+    runs-on: ubuntu-latest
+    needs: test_stage # Запуск только после успешных тестов
+    
+    steps:
+      - name: Download Artifact for Deploy
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+
+      - name: Simulated Deploy
+        run: |
+          echo "=== Начинаем развертывание ==="
+          # Вытаскиваем только номер ID из файла для красивого вывода
+          VERSION_ID=$(grep "Build ID:" version.txt | awk '{print $3}')
+          echo "Развертывание версии $VERSION_ID успешно завершено!"
