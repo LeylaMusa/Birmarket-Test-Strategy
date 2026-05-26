@@ -8,7 +8,7 @@
 
 * Birmarket platformasının **funksional, stabil, təhlükəsiz və istifadəçi-dostu** olmasını təmin etmək
 * Production-a çıxmazdan əvvəl **kritik riskləri minimuma endirmək**
-* Biznes axınlarının (satış, ödəniş, sifariş) düzgün işlədiyini təsdiqləmək
+* Biznes axınlarının (satış, ödəniş, sifariş) düzgün işlədiyini təs  diqləmək
 
 ---
 
