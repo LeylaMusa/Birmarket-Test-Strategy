@@ -1,9 +1,8 @@
 name: Bash CI/CD Emulation
-
-# Пайплайн запускается автоматически при каждом пуше (push) в ветку main
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ] # Теперь сработает, даже если ветка называется master
+  workflow_dispatch: # Появится кнопка для ручного запуска, если автоматика опять затупит
 
 jobs:
   # === ЭТАП 1: СБОРКА ===
